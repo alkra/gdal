@@ -1,0 +1,91 @@
+# OGR Sqlitevirtual: LEFT JOIN fails when the join condition evaluates
+  to NULL
+
+Consider the data "bugnull-data.vrt" below:
+
+<OGRVRTDataSource>
+  <OGRVRTLayer name="data">
+    <SrcDataSource>*Any file that OGR understands*</SrcDataSource>
+    <SrcSQL dialect="SQLite">
+        SELECT MakePoint(0, 1) AS GEOMETRY, 1 AS id, 2 AS foreignid
+      UNION ALL
+        SELECT MakePoint(1, 1) AS GEOMETRY, 2 AS id, NULL AS foreignid
+    </SrcSQL>
+  </OGRVRTLayer>
+</OGRVRTDataSource>
+
+And the recipe "bugnull-test.vrt" below:
+
+<OGRVRTDataSource>
+  <OGRVRTLayer name="test">
+    <SrcDataSource relativeToVRT="1">bugnull-data.vrt</SrcDataSource>
+    <SrcSQL dialect="SQLite">
+      SELECT a.GEOMETRY, a.id AS aid, b.id AS bid
+        FROM data a
+        LEFT JOIN data b ON a.foreignid = b.id
+    </SrcSQL>
+  </OGRVRTLayer>
+</OGRVRTDataSource>
+
+"ogrinfo bugnull-test.vrt test" outputs:
+
+INFO: Open of `../bugnull-test.vrt'
+      using driver `OGR_VRT' successful.
+
+Layer name: test
+Geometry: Unknown (any)
+ERROR 1: In GetNextRawFeature(): sqlite3_step() : Unhandled constraint data type : 5
+Feature Count: 1
+ERROR 1: In GetNextRawFeature(): sqlite3_step() : Unhandled constraint data type : 5
+Extent: (0.000000, 1.000000) - (0.000000, 1.000000)
+Layer SRS WKT:
+(unknown)
+Geometry Column = GEOMETRY
+aid: Integer (0.0)
+bid: Integer (0.0)
+OGRFeature(test):0
+  aid (Integer) = 1
+  bid (Integer) = 2
+  POINT (0 1)
+
+ERROR 1: In GetNextRawFeature(): sqlite3_step() : Unhandled constraint data type : 5
+
+
+Whereas other DBMS (tested without the geometry column: SQLite,
+PostgreSQL) print:
+
+ aid | bid
+ ----+----
+   1 |  2
+   2 |
+
+The SQL:92 standard reads, p. 183:
+
+         1) Case:
+            [...]
+            c) If a <join condition> is specified, then let T be the multi-
+              set of rows of CP for which the specified <search condition>
+              is true.
+
+So the other DBMS are right: when the join condition evaluates to
+NULL (i.e., non-true), the rows shall not be joined and, in the case
+of a LEFT join, the row from left table shall be included in the
+result set.
+
+----
+
+1) Uniquement si self-join ? Tester avec nouveau bugnull-data -> aussi
+
+2) Pourquoi ça marche si data en WITH ?
+
+Investigating further, the error message comes from
+ogr/ogrsf_frmts/sqlite/ogrsqlitevirtualogr.cpp:1150, and the digit 5
+is SQLITE_NULL (as documented in
+https://www.sqlite.org/c3ref/c_blob.html).
+
+If I understand the code correctly, the attribute filter does not know
+how to write in SQL language a right operand whose type has been
+parsed as null.
+
+As the fix looks simple ( "NULL" ), I'm preparing a pull request.  I hope this
+will not break something else.

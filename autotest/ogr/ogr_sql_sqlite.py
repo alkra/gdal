@@ -498,7 +498,7 @@ def test_ogr_sql_sqlite_2():
 
 
 def test_ogr_sql_sqlite_left_join():
-
+    # Test Alban ici
     ds = ogr.Open("data")
 
     sql_lyr = ds.ExecuteSQL(
