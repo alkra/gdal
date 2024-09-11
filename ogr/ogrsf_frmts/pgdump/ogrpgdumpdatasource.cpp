@@ -353,19 +353,6 @@ OGRPGDumpDataSource::ICreateLayer(const char *pszLayerName,
         }
     }
 
-    if (bCreateTable &&
-        (EQUAL(pszDropTable, "YES") || EQUAL(pszDropTable, "ON") ||
-         EQUAL(pszDropTable, "TRUE") || EQUAL(pszDropTable, "IF_EXISTS")))
-    {
-        if (EQUAL(pszDropTable, "IF_EXISTS"))
-            osCommand.Printf("DROP TABLE IF EXISTS %s.%s CASCADE",
-                             pszSchemaEscaped, pszTableEscaped);
-        else
-            osCommand.Printf("DROP TABLE %s.%s CASCADE", pszSchemaEscaped,
-                             pszTableEscaped);
-        Log(osCommand);
-    }
-
     /* -------------------------------------------------------------------- */
     /*      Handle the GEOM_TYPE option.                                    */
     /* -------------------------------------------------------------------- */
@@ -427,6 +414,27 @@ OGRPGDumpDataSource::ICreateLayer(const char *pszLayerName,
         }
     }
 
+    /* -------------------------------------------------------------------- */
+    /*      Drop existing table                                             */
+    /* -------------------------------------------------------------------- */
+    LogStartTransaction();
+
+    if (bCreateTable &&
+        (EQUAL(pszDropTable, "YES") || EQUAL(pszDropTable, "ON") ||
+         EQUAL(pszDropTable, "TRUE") || EQUAL(pszDropTable, "IF_EXISTS")))
+    {
+        if (EQUAL(pszDropTable, "IF_EXISTS"))
+            osCommand.Printf("DROP TABLE IF EXISTS %s.%s CASCADE",
+                             pszSchemaEscaped, pszTableEscaped);
+        else
+            osCommand.Printf("DROP TABLE %s.%s CASCADE", pszSchemaEscaped,
+                             pszTableEscaped);
+        Log(osCommand);
+    }
+
+    /* -------------------------------------------------------------------- */
+    /*      Deduce geometry name and type                                   */
+    /* -------------------------------------------------------------------- */
     const std::string osEscapedTableNameSingleQuote =
         OGRPGDumpEscapeString(osTable.c_str());
     const char *pszEscapedTableNameSingleQuote =
@@ -457,8 +465,6 @@ OGRPGDumpDataSource::ICreateLayer(const char *pszLayerName,
                 Log(osCommand);
         }
     }
-
-    LogStartTransaction();
 
     /* -------------------------------------------------------------------- */
     /*      Create an empty table first.                                    */
