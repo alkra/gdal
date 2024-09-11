@@ -1466,6 +1466,45 @@ def test_ogr_pgdump_CREATE_TABLE_NO(tmp_vsimem):
 
 
 ###############################################################################
+# Test TRUNCATE_TABLE=YES
+
+
+def test_ogr_pgdump_TRUNCATE_TABLE_YES(tmp_vsimem):
+
+    ds = ogr.GetDriverByName("PGDump").CreateDataSource(
+        tmp_vsimem / "test_ogr_pgdump_TRUNCATE_TABLE_YES.sql", options=["LINEFORMAT=LF"]
+    )
+    lyr = ds.CreateLayer(
+        "test",
+        geom_type=ogr.wkbPoint,
+        options=["TRUNCATE_TABLE=YES", "GEOM_COLUMN_POSITION=END"],
+    )
+    lyr.CreateField(ogr.FieldDefn("str", ogr.OFTString))
+    f = ogr.Feature(lyr.GetLayerDefn())
+    f["str"] = "foo"
+    f.SetGeometry(ogr.CreateGeometryFromWkt("POINT(0 1)"))
+    lyr.CreateFeature(f)
+    ds = None
+
+    f = gdal.VSIFOpenL(tmp_vsimem / "test_ogr_pgdump_TRUNCATE_TABLE_YES.sql", "rb")
+    sql = gdal.VSIFReadL(1, 10000, f).decode("utf8")
+    gdal.VSIFCloseL(f)
+
+    # print(sql)
+
+    def check_and_remove(needle):
+        nonlocal sql
+        assert needle in sql, sql
+        sql = sql[sql.find(needle) + len(needle) :]
+
+    check_and_remove("""BEGIN;""")
+    check_and_remove("""TRUNCATE TABLE "public"."test" RESTART IDENTITY CASCADE;""")
+    check_and_remove("""DROP TABLE IF EXISTS "public"."test" CASCADE;""")
+    check_and_remove("""CREATE TABLE "public"."test"();""")
+    check_and_remove("""COMMIT;""")
+
+
+###############################################################################
 # Test long identifiers
 
 
