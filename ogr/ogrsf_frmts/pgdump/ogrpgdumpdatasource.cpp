@@ -204,6 +204,8 @@ OGRPGDumpDataSource::ICreateLayer(const char *pszLayerName,
         CPLFetchBool(papszOptions, "CREATE_SCHEMA", true);
     const char *pszDropTable =
         CSLFetchNameValueDef(papszOptions, "DROP_TABLE", "IF_EXISTS");
+    const bool bTruncateTable =
+	CPLFetchBool(papszOptions, "TRUNCATE_TABLE", false);
     int nGeometryTypeFlags = 0;
 
     if (OGR_GT_HasZ(eType))
@@ -415,9 +417,16 @@ OGRPGDumpDataSource::ICreateLayer(const char *pszLayerName,
     }
 
     /* -------------------------------------------------------------------- */
-    /*      Drop existing table                                             */
+    /*      Clean existing table                                            */
     /* -------------------------------------------------------------------- */
     LogStartTransaction();
+
+    if (bTruncateTable)
+    {
+        osCommand.Printf("TRUNCATE TABLE \"%s\".\"%s\" RESTART IDENTITY CASCADE",
+                         pszSchemaName, pszTableName );
+        Log(osCommand);
+    }
 
     if (bCreateTable &&
         (EQUAL(pszDropTable, "YES") || EQUAL(pszDropTable, "ON") ||
