@@ -81,11 +81,11 @@ def test_ogr_pgdump_1(tmp_path):
         assert needle in sql, sql
         sql = sql[sql.find(needle) + len(needle) :]
 
+    check_and_remove("""BEGIN;""")
     check_and_remove("""DROP TABLE IF EXISTS "public"."tpoly" CASCADE;""")
     check_and_remove(
         """DELETE FROM geometry_columns WHERE f_table_name = 'tpoly' AND f_table_schema = 'public';"""
     )
-    check_and_remove("""BEGIN;""")
     check_and_remove("""CREATE TABLE "public"."tpoly"();""")
     check_and_remove(
         """ALTER TABLE "public"."tpoly" ADD COLUMN "ogc_fid" SERIAL CONSTRAINT "tpoly_pk" PRIMARY KEY;"""
@@ -169,8 +169,8 @@ def test_ogr_pgdump_2(tmp_path):
         sql = sql[sql.find(needle) + len(needle) :]
 
     check_and_remove("""CREATE SCHEMA "ano""ther_schema";""")
-    check_and_remove("""DROP TABLE IF EXISTS "ano""ther_schema"."xx""yyy" CASCADE;""")
     check_and_remove("""BEGIN;""")
+    check_and_remove("""DROP TABLE IF EXISTS "ano""ther_schema"."xx""yyy" CASCADE;""")
     check_and_remove("""CREATE TABLE "ano""ther_schema"."xx""yyy"();""")
     check_and_remove(
         """ALTER TABLE "ano""ther_schema"."xx""yyy" ADD COLUMN "ogc_fid" SERIAL CONSTRAINT "xx""yyy_pk" PRIMARY KEY;"""
@@ -278,8 +278,8 @@ def test_ogr_pgdump_3(tmp_path):
     assert "CREATE INDEX" not in sql
 
     check_and_remove("""CREATE SCHEMA "another_schema";""")
-    check_and_remove("""DROP TABLE IF EXISTS "another_schema"."tpoly" CASCADE;""")
     check_and_remove("""BEGIN;""")
+    check_and_remove("""DROP TABLE IF EXISTS "another_schema"."tpoly" CASCADE;""")
     check_and_remove("""CREATE TABLE "another_schema"."tpoly"();""")
     check_and_remove(
         """ALTER TABLE "another_schema"."tpoly" ADD COLUMN "ogc_fid" SERIAL CONSTRAINT "tpoly_pk" PRIMARY KEY;"""
