@@ -1,0 +1,18 @@
+<OGRVRTDataSource>
+  <OGRVRTLayer name="data">
+    <SrcDataSource>/mnt/q/Services/Assainissement/19037_Chamboulive/19037_ZAssColl_20010927.shp</SrcDataSource>
+    <SrcSQL dialect="SQLite">
+        SELECT MakePoint(0, 1) AS GEOMETRY, 1 AS id, 2 AS foreignid
+      UNION ALL
+        SELECT MakePoint(1, 1) AS GEOMETRY, 2 AS id, NULL AS foreignid
+    </SrcSQL>
+  </OGRVRTLayer>
+  <OGRVRTLayer name="databis">
+    <SrcDataSource>/mnt/q/Services/Assainissement/19037_Chamboulive/19037_ZAssColl_20010927.shp</SrcDataSource>
+    <SrcSQL dialect="SQLite">
+        SELECT MakePoint(0, 1) AS GEOMETRY, 1 AS id, 2 AS foreignid
+      UNION ALL
+        SELECT MakePoint(1, 1) AS GEOMETRY, 2 AS id, NULL AS foreignid
+    </SrcSQL>
+  </OGRVRTLayer>
+</OGRVRTDataSource>

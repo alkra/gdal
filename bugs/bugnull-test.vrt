@@ -1,0 +1,31 @@
+<OGRVRTDataSource>
+  <OGRVRTLayer name="test">
+    <SrcDataSource relativeToVRT="1">bugnull-data.vrt</SrcDataSource>
+    <SrcSQL dialect="SQLite">
+      SELECT a.GEOMETRY, a.id AS aid, b.id AS bid
+        FROM data a
+        LEFT JOIN data b ON a.foreignid = b.id
+    </SrcSQL>
+  </OGRVRTLayer>
+  <OGRVRTLayer name="testbis">
+    <SrcDataSource relativeToVRT="1">bugnull-data.vrt</SrcDataSource>
+    <SrcSQL dialect="SQLite">
+      SELECT a.GEOMETRY, a.id AS aid, b.id AS bid
+        FROM data a
+        LEFT JOIN databis b ON a.foreignid = b.id
+    </SrcSQL>
+  </OGRVRTLayer>
+  <OGRVRTLayer name="testter">
+    <SrcDataSource relativeToVRT="1">bugnull-data.vrt</SrcDataSource>
+    <SrcSQL dialect="SQLite">
+      WITH RECURSIVE datater AS (
+        SELECT MakePoint(0, 1) AS GEOMETRY, 1 AS id, 2 AS foreignid
+      UNION ALL
+        SELECT MakePoint(1, 1) AS GEOMETRY, 2 AS id, NULL AS foreignid
+      )
+      SELECT a.GEOMETRY, a.id AS aid, b.id AS bid
+        FROM datater a
+        LEFT JOIN datater b ON a.foreignid = b.id
+    </SrcSQL>
+  </OGRVRTLayer>
+</OGRVRTDataSource>
