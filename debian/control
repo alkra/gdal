@@ -1,0 +1,30 @@
+Package: gdal-devel
+Maintainer: Alban Kraus (Tulle agglo)
+Homepage: https://github.com/alkra/gdal
+Section: devel
+Version: 3.14.0dev
+Architecture: all
+Depends: cmake, make, libproj-dev
+Recommends: ccache, cmake-curses-gui, libcurl4-gnutls-dev, libgeos-dev, libxml2-dev,
+            clang-tidy, gpg, git, grep, gzip, libjson-c-dev, libarchive-dev, libblosc-dev, libcrypto++-dev, libcurl4-gnutls-dev, libdeflate-dev, libhdf5-dev, liblzma-dev, liblz4-dev, libzip-dev, libzstd-dev, python3, tar, unixodbc-dev, xz-utils, zip, zlib1g-dev,
+# Algorithms
+            libarmadillocpp-dev, libgeos-dev, libqhull-dev,
+# Apps
+            libmuparser-dev, libjson-c-dev, zlib1g-dev,
+# Doc
+            doxygen, python3-myst-nb, python3-sphinx, python3-sphinxcontrib.jquery, python3-sphinxcontrib.spelling, python3-sphinxcontrib.svg2pdfconverter, python3-sphinx-copybutton, python3-sphinx-tabs, python3-sphinx-toolbox, python3-breathe, python3-docstub,
+# Raster drivers
+            libaec-dev, libavif-dev, libblosc-dev, libcfitsio-dev, libcurl4-gnutls-dev, libexprtk-dev, libgeos-dev, libhdf4-alt-dev, libhdf5-dev, libjpeg-dev, libgeotiff-dev, libgif-dev, libheif-dev, libjson-c-dev, libjxl-dev, liblerc-dev, libmuparser-dev, libnetcdf-dev, libopenexr-dev, libopenjp2-7-dev, libpng-dev, libpoppler-dev | libpodofo-dev | libpdfium-dev, libpq-dev, libproj-dev, libsqlite3-dev, libwebp-dev, libzstd-dev, zlib1g-dev,
+# Vector drivers
+            bison, default-libmysqlclient-dev, libcurl4-gnutls-dev, libexpat1-dev, libfreexl-dev, libgeos-dev, libfyba-dev, libjson-c-dev, libkml-dev, libmongoc-dev, libpcre2-dev, libproj-dev, libpq-dev, libsfcgal-dev, librasterlite2-dev, libspatialite-dev, libsqlite3-dev, libxerces-c-dev, shapelib, unixodbc-dev, zlib1g-dev,
+# For Python bindings
+           swig, python3-dev, python3-numpy, python3-setuptools,
+# For tests
+           python3-pytest, python3-pytest-benchmark, pthon3-pytest-env, python3-filelock, python3-pytest-sugar, python3-lxml, python3-jsonschema,
+# For autocompletion in GDAL apps
+           pkg-config, bash-completion
+# For Docker builds
+Suggests: docker.io,
+          libbasisu-ktx2-dev, libbrunsli-dev, liblcms2-dev, libcrnlib-dev, libcsf-dev, libertiff-dev, libgrokjp2-dev, libgta-dev, libjp2kak-dev, liblzma-dev, libkea-dev, libmrsid-dev, libpcodec-c-dev, libqb3-dev, libtiledb-dev,
+          teigha, opendrive, libarrowc-dev, libfilegdb-dev, libidb-dev, libidrisi-dev, libopencad-dev, libodr-dev, liboracleoci-dev, libparquet-dev
+Description: This metapackage pulls GDAL build dependencies
